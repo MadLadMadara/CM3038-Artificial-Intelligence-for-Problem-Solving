@@ -46,4 +46,16 @@ public class Person {
     public boolean isDriver() {
         return driver;
     }
+    /**
+     * simple to string method of person
+     * @return formated string
+     */
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", weight=" + weight +
+                ", driver=" + driver +
+                '}';
+    }
 }
