@@ -22,7 +22,7 @@ public class Person {
     final private boolean driver;
 
     /**
-     * initilizes a person object with the given values
+     * initializes a person object with the given values
      * @param name of individual
      * @param weight of individual weight
      * @param driver can the individual drive the boat
