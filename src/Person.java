@@ -4,6 +4,11 @@
  * @author Sam McRuvie
  */
 public class Person {
+
+    /**
+     * individuals name
+     */
+    final private String name;
     /**
      * the individual weight
      * once set this value will not need to change
@@ -18,10 +23,12 @@ public class Person {
 
     /**
      * initilizes a person object with the given values
+     * @param name of individual
      * @param weight of individual weight
      * @param driver can the individual drive the boat
      */
-    public Person(int weight, boolean driver) {
+    public Person(String name, int weight, boolean driver) {
+        this.name = name;
         this.weight = weight;
         this.driver = driver;
     }
