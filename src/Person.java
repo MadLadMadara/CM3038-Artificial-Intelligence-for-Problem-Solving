@@ -4,7 +4,6 @@
  * @author Sam McRuvie
  */
 public class Person {
-
     /**
      * individuals name
      */
