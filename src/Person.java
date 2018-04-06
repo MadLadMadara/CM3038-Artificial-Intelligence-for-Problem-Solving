@@ -31,6 +31,7 @@ public class Person {
         this.weight = weight;
         this.driver = driver;
     }
+
     /**
      * getter for individual weight
      * @return the weight of the individual
@@ -38,6 +39,7 @@ public class Person {
     public int getWeight() {
         return weight;
     }
+
     /**
      * check to see if the individual can drive
      * @return if true the individual can drive
@@ -45,6 +47,7 @@ public class Person {
     public boolean isDriver() {
         return driver;
     }
+
     /**
      * simple to string method of person
      * @return formated string
