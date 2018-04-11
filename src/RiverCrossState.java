@@ -10,7 +10,15 @@ import cm3038.search.*;
  *
  */
 public class RiverCrossState implements State {
-    // TODO: 06/04/2018  nother and south bank hash maps
+    /**
+     * north bank population
+     */
+    public HashMap<String, Person> northBankPopulation;
+    /**
+     * south bank population
+     */
+    public HashMap<String, Person> southBankPopulation;
+
     /**
      * The location of the raft as defined in the {@link RiverBank} enumerated type.
      */
@@ -19,15 +27,11 @@ public class RiverCrossState implements State {
     /**
      * Create a McState object with the given initial values.
      *
-     * @param nm Number of missionaries in the northern bank.
-     * @param nc Number of cannibals in the northern bank.
-     * @param sm Number of missionaries in the southern bank.
-     * @param sc Number of cannibals in the southern bank.
      * @param raft The location of the raft as defined.
      */
-    public RiverCrossState(int nm,int nc,int sm,int sc,RiverBank raft) {
-        // TODO: 06/04/2018  initialize
-
+    public RiverCrossState(HashMap<String, Person> northBankPopulation,  HashMap<String, Person> southBankPopulation ,RiverBank raft) {
+        this.northBankPopulation = (HashMap<String, Person>)northBankPopulation.clone();
+        this.southBankPopulation = (HashMap<String, Person>)southBankPopulation.clone();
         this.raftLocation=raft;
     } //end method
 
@@ -65,7 +69,7 @@ public class RiverCrossState implements State {
      *
      */
     public int hashCode() {
-
+        return 1;
     } //end method
 
     /**
