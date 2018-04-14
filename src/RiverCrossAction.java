@@ -21,6 +21,7 @@ public class RiverCrossAction extends Action {
      * @param to the side the boat will cross to
      */
     public RiverCrossAction(String[] crosserKeys, RiverBank to) {
+        // TODO: 13/04/2018 fix parram array to linked list
         this.crosserKeys = crosserKeys.clone();
         this.toBank = to;
     } //end method
@@ -29,6 +30,7 @@ public class RiverCrossAction extends Action {
      *
      */
     public String toString() {
+        // TODO: 13/04/2018 out put keys of people being moved
         String result;
         if (this.toBank==RiverBank.NORTH)
             result="South->North ";
