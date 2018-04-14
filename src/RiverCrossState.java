@@ -114,9 +114,8 @@ public class RiverCrossState implements State {
         // TODO: 13/04/2018 isInvalid method this might need work later
 
         if (this.currentFuelUsage < 0 ||
-                (this.northBankPopulation.size() < 1 && this.southBankPopulation.size() < 1) ||
-                this.currentFuelUsage < 0 ||
-                (this.raftLocation == RiverBank.NORTH ^ this.raftLocation == RiverBank.SOUTH) )
+                ((this.raftLocation == RiverBank.NORTH && this.northBankPopulation.size() < 1) ||
+                        (this.raftLocation == RiverBank.SOUTH && this.southBankPopulation.size() < 1) ) )
             return true;
 
         /**
