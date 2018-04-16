@@ -47,17 +47,34 @@ public class RiverCrossState implements State {
      * Converting a {@link RiverCrossState} object into a {@link String}.
      */
     public String toString() {
-        // TODO: 13/04/2018 toString method
-        String result="";
+        String result = "";
+        int sumWeightNorth = 0;
+        int sumWeightSouth = 0;
+        result+="North bank population";
+        for (Person p :
+                this.northBankPopulation.values()) {
+            result+= "\r" + p.toString();
+            sumWeightNorth+=p.getWeight();
+        }
+        result+="South bank population";
+        for (Person p :
+                this.southBankPopulation.values()) {
+            result+= "\r" + p.toString();
+            sumWeightSouth+=p.getWeight();
+        }
         if (raftLocation==RiverBank.NORTH)
-            result+=" Raft North";
-
+            result+="\rRaft location: North";
         if (raftLocation==RiverBank.SOUTH)
-            result+=" Raft South";
+            result+="\rRaft location: South";
 
-
-
-        return result;
+        // FIX: 14/04/2018 toString: could add number of drivers on each bank, it would help with debugging later
+        return result+"\rFuel usage:" + this.currentFuelUsage +
+                "\rNorth bank size:" + this.northBankPopulation.size() +
+                "\rSum North bank population weight: "+ sumWeightNorth +
+                "\rAverage North bank person weight: "+ sumWeightNorth/this.northBankPopulation.size() +
+                "\rSouth bank size" + this.southBankPopulation.size() +
+                "\rSum South bank population weight: "+ sumWeightSouth +
+                "\rAverage South bank person weight: "+ sumWeightSouth/this.southBankPopulation.size();
     } //end method
 
     /**
@@ -82,7 +99,8 @@ public class RiverCrossState implements State {
     } //end method
 
     /**
-     *
+     * hash code method
+     * @return an integer that is unique to the configuration of attributes values in this object
      */
     public int hashCode() {
         return this.northBankPopulation.hashCode() + this.southBankPopulation.hashCode() + this.currentFuelUsage * 100 + ((this.raftLocation == RiverBank.NORTH)?10:0);
@@ -111,15 +129,14 @@ public class RiverCrossState implements State {
      * @return true if a state is invalid. Or false otherwise.
      */
     public boolean isInvalid(){
-        // TODO: 13/04/2018 isInvalid method this might need work later
-
+        // FIX 14/04/2018 toString: main if might need reworking
         if (this.currentFuelUsage < 0 ||
-                ((this.raftLocation == RiverBank.NORTH && this.northBankPopulation.size() < 1) ||
-                        (this.raftLocation == RiverBank.SOUTH && this.southBankPopulation.size() < 1) ) )
+                ((this.raftLocation == RiverBank.NORTH && this.northBankPopulation.isEmpty()) ||
+                        (this.raftLocation == RiverBank.SOUTH && this.southBankPopulation.isEmpty()) ) )
             return true;
 
         /**
-         * checks if there is a driver on the back the raft is at.
+         * checks if there is a driver on the bank the raft is at.
          */
         for (Person p:
                 (this.raftLocation == RiverBank.NORTH)? this.northBankPopulation.values(): this.southBankPopulation.values()) {
@@ -135,14 +152,29 @@ public class RiverCrossState implements State {
      * @return The next state after the action is applied to the current state object.
      */
     public RiverCrossState applyAction(RiverCrossAction action){
-        // TODO: 13/04/2018 applyAction method
-        if (action.toBank==RiverBank.NORTH){
-//            river bank north
+        HashMap<String, Person> newNorthBank = (HashMap<String, Person>)this.northBankPopulation.clone();
+        HashMap<String, Person> newSouthBank = (HashMap<String, Person>)this.northBankPopulation.clone();
+        int fuelUsed = 0;
 
+        if (action.toBank==RiverBank.NORTH){
+            for (String k:
+                    action.peoplesKeysToCross) {
+                Person p = newSouthBank.remove(k);
+                fuelUsed += p.getWeight();
+                newNorthBank.put(k, p);
+            }
         }else{
-//            river bank south
+
+            for (String k:
+                    action.peoplesKeysToCross) {
+                Person p = newNorthBank.remove(k);
+                fuelUsed += p.getWeight();
+                newSouthBank.put(k, p);
+            }
 
         }
+        RiverCrossState nextState = new RiverCrossState(newNorthBank, newSouthBank, this.oppositeBank(this.raftLocation), this.currentFuelUsage + fuelUsed);
+        return nextState;
 
     } //end method
 

@@ -1,4 +1,8 @@
 import cm3038.search.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * @author Sam McRuvie
  */
@@ -7,7 +11,7 @@ public class RiverCrossAction extends Action {
     /**
      * list of crosser keys for the north and south banks hash maps
      */
-    public String[] crosserKeys;
+    public ArrayList<String> peoplesKeysToCross;
 
     /**
      * We are moving the raft to this bank.
@@ -17,12 +21,11 @@ public class RiverCrossAction extends Action {
 
     /**
      * initialises RiverCrossAction object with people to be moved and to which bank.
-     * @param crosserKeys unique key for river bank hash map.
+     * @param peoplesKeysToCross  hash map of people to be moved.
      * @param to the side the boat will cross to
      */
-    public RiverCrossAction(String[] crosserKeys, RiverBank to) {
-        // TODO: 13/04/2018 fix parram array to linked list
-        this.crosserKeys = crosserKeys.clone();
+    public RiverCrossAction(ArrayList<String> peoplesKeysToCross, RiverBank to) {
+        this.peoplesKeysToCross = (ArrayList<String>)peoplesKeysToCross.clone();
         this.toBank = to;
     } //end method
 
@@ -30,15 +33,11 @@ public class RiverCrossAction extends Action {
      *
      */
     public String toString() {
-        // TODO: 13/04/2018 out put keys of people being moved
         String result;
         if (this.toBank==RiverBank.NORTH)
             result="South->North ";
         else result="North->South ";
-        for (String s :
-                this.crosserKeys) {
-            result +="\r"+s;
-        }
+        result += this.peoplesKeysToCross.toString();
         return result;
     } //end method
 } //end class
