@@ -1,15 +1,19 @@
 import cm3038.search.*;				//use some classes in the uninformed search library
 import cm3038.search.informed.*;	//use the informed search library
 
+import java.util.HashMap;
+
 
 /**
  * This is a informed search problem specialised for the 8-Puzzle problem.
  * @author kit
  *
  */
-public class RiverCrossProblem extends BestFirstSearchProblem
-{
+public class RiverCrossProblem extends BestFirstSearchProblem {
 
+    public static int RAFT_SIZE=2;
+
+    public static double RAFT_MAX_WEIGHT = 180;
 
     /**
      * Construct a RiverCrossProblem object from the initial and goal state.
@@ -28,13 +32,14 @@ public class RiverCrossProblem extends BestFirstSearchProblem
      */
     public double evaluation(Node node)
     {
+
         //
         //*** Update this evaluation function.
         //*** Currently it is doing Greedy best-first by using the heuristic alone.
         //*** i.e. estimate how far the given "node" is from a goal.
         //*** It does not take into consideration the cost from the root to "node" so far.
         //***
-        return heuristic(node.state);
+        return heuristic(node.state) + node.getCost();
     } //end method
 
     /**
@@ -43,7 +48,14 @@ public class RiverCrossProblem extends BestFirstSearchProblem
      */
     public double heuristic(State currentState) {
         // TODO: 16/04/2018 heuristic method
+
+        RiverCrossState state = (RiverCrossState)currentState;
+
         double result = 0.0;
+        for (Person p:
+        state.southBankPopulation.values()) {
+            result+=p.getWeight()*1000;
+        }
 
 
         return result;

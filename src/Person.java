@@ -12,7 +12,7 @@ public class Person {
      * the individual weight
      * once set this value will not need to change
      */
-    final private int weight;
+    final private double weight;
 
     /**
      * the individual ability to drive
@@ -36,7 +36,7 @@ public class Person {
      * getter for individual weight
      * @return the weight of the individual
      */
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
