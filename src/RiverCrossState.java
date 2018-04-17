@@ -120,7 +120,7 @@ public class RiverCrossState implements State {
             tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), peopleCrossing);
             result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
 
-            double driverWeight = bankDriverPopulationWithRaft.get(driver.getKey()).getWeight(); // gets the weight of the driver
+           // gets the weight of the driver
             /**
              * if raft is south work out the configuration of prople that can be added to the beat
              */
@@ -136,19 +136,22 @@ public class RiverCrossState implements State {
                         bankPopulationPowerset) {
 
                     if (!boatConfiguration.isEmpty()){
-                        double boatWeight = driverWeight;
+                        double boatWeight = driver.getValue().getWeight();
                         System.out.println("driver"+boatWeight);
                         // loop over all people in boat configuration
                         peopleCrossing.clear();
 
                         for (Object stringPersonKey:
                                 boatConfiguration) {
-                            System.out.println(tempPopulation.get(stringPersonKey).getWeight());
+
                             boatWeight += tempPopulation.get(stringPersonKey).getWeight();
-                            if((boatWeight < RiverCrossProblem.RAFT_MAX_WEIGHT && boatWeight > 0) ||
+
+                            if((boatWeight <= RiverCrossProblem.RAFT_MAX_WEIGHT && boatWeight > 0) ||
                                     (boatConfiguration.size() < RiverCrossProblem.RAFT_SIZE && boatConfiguration.size() > 0)) {
+
                                 peopleCrossing.put((String) stringPersonKey, bankPopulationWithRaft.get((String) stringPersonKey));
                             }else{
+                                boatWeight = driver.getValue().getWeight();
                                 peopleCrossing.clear();
                                 break;
                             }

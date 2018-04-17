@@ -48,7 +48,7 @@ public class RiverCrossAction extends Action {
         if (this.toBank==RiverBank.NORTH)
             result="South->North ";
         else result="North->South ";
-        result+="["+this.boatWeight()+"]" + " ("+ this.cost +")";
+        result+= "("+ this.cost +")"+" {"+RiverCrossProblem.RAFT_MAX_WEIGHT+"}";
         result += this.peopleCrossing.keySet().toString();
         return result;
     } //end method
