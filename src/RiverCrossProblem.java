@@ -54,11 +54,11 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
         double result = 0.0;
         for (Person p:
         state.southBankPopulation.values()) {
-            result+=p.getWeight()*2000;
+            result+=p.getWeight();
         }
 
 
-        return result;
+        return result*200;
     } //end method
 
 

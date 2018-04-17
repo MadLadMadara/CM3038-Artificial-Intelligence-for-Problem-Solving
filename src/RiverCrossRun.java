@@ -22,10 +22,10 @@ public class RiverCrossRun {
         southBank.put("George", new Person("George", 30, false));
         southBank.put("Chrise", new Person("Chrise", 40, true));
 
-//        southBank.put("john", new Person("john", 10, true));
-//        southBank.put("jeff", new Person("jeff", 20, false));
-//        southBank.put("joe", new Person("joe", 30, false));
-//        southBank.put("bob", new Person("bob", 40, true));
+        southBank.put("john", new Person("john", 10, true));
+        southBank.put("jeff", new Person("jeff", 20, false));
+        southBank.put("joe", new Person("joe", 30, false));
+        southBank.put("bob", new Person("bob", 40, true));
 
 
         northBank = new HashMap<String, Person>();

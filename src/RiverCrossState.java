@@ -161,7 +161,12 @@ public class RiverCrossState implements State {
                         peopleCrossing.put(driver.getKey(), bankDriverPopulationWithRaft.get(driver.getKey()) );
                         System.out.println(boatWeight);
                         tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), peopleCrossing);
-                        result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
+
+                        if(tempAction.boatWeight() <= RiverCrossProblem.RAFT_MAX_WEIGHT &&
+                                tempAction.boatWeight() > 0 &&
+                                tempAction.peopleCrossing.size() <= RiverCrossProblem.RAFT_SIZE &&
+                                tempAction.peopleCrossing.size() > 0)
+                            result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
 
                     }
                 }
