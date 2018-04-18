@@ -18,6 +18,10 @@ public class RiverCrossRun {
         southBank.add(new Person("Betty", 90, false));
         southBank.add(new Person("Claire", 50, true));
         southBank.add(new Person("Dave", 30, false));
+        southBank.add(new Person("Scot", 100, true));
+        southBank.add(new Person("John", 90, false));
+        southBank.add(new Person("Joe", 50, false));
+        southBank.add(new Person("Phil", 30, false));
 
         northBank = new HashSet<>();
 

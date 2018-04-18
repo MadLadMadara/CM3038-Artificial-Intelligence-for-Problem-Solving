@@ -105,10 +105,10 @@ public class RiverCrossState implements State {
         RiverCrossAction tempAction;
         // the populating hashmap of which ever bank the raft is located
         Set<Person> bankPopulationWithRaft = (this.raftLocation == RiverBank.NORTH)? new HashSet<>(this.northBankPopulation): new HashSet<>(this.southBankPopulation);
-
         // the driver populating hashmap of which ever bank the raft is located
         Set<Person> bankDriverPopulationWithRaft = this.driversOnBank(bankPopulationWithRaft);
 
+        Set<Set> populationPowerSet = getPopulationPowerSet(new HashSet<>(bankPopulationWithRaft));
         // all drivers can travel across
         for (Person driver:
                 bankDriverPopulationWithRaft) {
@@ -117,8 +117,8 @@ public class RiverCrossState implements State {
              * if raft is south work out the configuration of prople that can be added to the beat
              */
             if(this.raftLocation == RiverBank.SOUTH){
-                HashSet<Person> tempPopulation = new HashSet<>(bankPopulationWithRaft);
-                Set<Set> bankPopulationPowerset = this.safeBoatConfiguration(populationPowerSet(tempPopulation), driver); // get the powerset of populationBank with out driver
+                ;
+                Set<Set> bankPopulationPowerset = this.safeBoatConfiguration(populationPowerSet, driver); // get the powerset of populationBank with out driver
                 for (Set s:
                     bankPopulationPowerset) {
                     tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), new HashSet<>(s));
@@ -167,7 +167,7 @@ public class RiverCrossState implements State {
         return bank.stream().filter(p -> p.isDriver()).collect(Collectors.toSet());
     }
 
-    private Set<Set> populationPowerSet(Set originalSet) {
+    private Set<Set> getPopulationPowerSet(Set originalSet) {
         Set<Set> sets = new HashSet<Set>();
         if (originalSet.isEmpty()) {
             sets.add(new HashSet());
@@ -176,7 +176,7 @@ public class RiverCrossState implements State {
         List list = new ArrayList(originalSet);
         Object head = (Object)list.get(0);
         Set rest = new HashSet(list.subList(1, list.size()));
-        for (Set set : populationPowerSet(rest)) {
+        for (Set set : getPopulationPowerSet(rest)) {
             Set newSet = new HashSet();
             newSet.add(head);
             newSet.addAll(set);
