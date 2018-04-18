@@ -1,5 +1,7 @@
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import cm3038.search.*;
 
 /**
@@ -14,32 +16,27 @@ public class RiverCrossState implements State {
     /**
      * north bank population
      */
-    public HashMap<String, Person> northBankPopulation;
-
+    public Set<Person> northBankPopulation;
+    // change these
     /**
      * south bank population
      */
-    public HashMap<String, Person> southBankPopulation;
+    public Set<Person> southBankPopulation;
 
     /**
      * The location of the raft as defined in the {@link RiverBank} enumerated type.
      */
     public RiverBank raftLocation;
-    /**
-     * the amount of fuel used up to this state
-     */
-
 
     /**
      * Create a McState object with the given initial values.
      * @param northBankPopulation hash map of people in the north bank.
      * @param southBankPopulation hash map of people in the south bank.
      * @param raft The location of the raft as defined.
-     * @param currentFuelUsage current fuel usage up to this point
      */
-    public RiverCrossState(HashMap<String, Person> northBankPopulation,  HashMap<String, Person> southBankPopulation ,RiverBank raft) {
-        this.northBankPopulation = (HashMap<String, Person>)northBankPopulation.clone();
-        this.southBankPopulation = (HashMap<String, Person>)southBankPopulation.clone();
+    public RiverCrossState(Set<Person>  northBankPopulation,  Set<Person>  southBankPopulation ,RiverBank raft) {
+        this.northBankPopulation = new HashSet<>(northBankPopulation);
+        this.southBankPopulation = new HashSet<>(southBankPopulation);
         this.raftLocation=raft;
     } //end method
 
@@ -47,19 +44,20 @@ public class RiverCrossState implements State {
      * Converting a {@link RiverCrossState} object into a {@link String}.
      */
     public String toString() {
-        String result = "";
+        String result = "\n!!!State!!!";
         if (raftLocation==RiverBank.NORTH)
             result+="\nRaft location: North";
         if (raftLocation==RiverBank.SOUTH)
             result+="\nRaft location: South";
 
-        result+="\nNorth Bank Population:"+this.northBankPopulation.keySet().toString();
-        result+="\nNorth Bank Population detail:"+this.northBankPopulation.toString();
-        result+="\nSorth Bank Population:"+this.southBankPopulation.keySet().toString();
-        result+="\nSouth Bank Population detail:"+this.southBankPopulation.toString();
+        result+="\nNorth Bank Population:"+this.northBankPopulation.toString();
+        result+="\nSorth Bank Population:"+this.southBankPopulation.toString();
+        // can be useful for debugging.
+//        result+="\nNorth Bank Population detail:"+this.northBankPopulation.toString();
+//        result+="\nSouth Bank Population detail:"+this.southBankPopulation.toString();
 
         // FIX: 14/04/2018 toString: could add number of drivers on each bank, it would help with debugging later
-        return result+"\nFuel usage:" + "\nNorth bank size:" + this.northBankPopulation.size() + "\nSouth bank size" + this.southBankPopulation.size();
+        return result+"\nNorth bank size:" + this.northBankPopulation.size() + "\nSouth bank size:" + this.southBankPopulation.size();
 
     } //end method
 
@@ -105,71 +103,32 @@ public class RiverCrossState implements State {
 
         // temp temp RiverCrossAction object
         RiverCrossAction tempAction;
-        // temp hashmap for people keys crossing
-        HashMap<String, Person> peopleCrossing = new HashMap<String, Person>();
         // the populating hashmap of which ever bank the raft is located
-        HashMap<String, Person> bankPopulationWithRaft = (this.raftLocation == RiverBank.NORTH)? (HashMap<String, Person>)this.northBankPopulation.clone():(HashMap<String, Person>)this.southBankPopulation.clone();
+        Set<Person> bankPopulationWithRaft = (this.raftLocation == RiverBank.NORTH)? new HashSet<>(this.northBankPopulation): new HashSet<>(this.southBankPopulation);
+
         // the driver populating hashmap of which ever bank the raft is located
-        HashMap<String, Person> bankDriverPopulationWithRaft = this.driversOnBank(bankPopulationWithRaft);
+        Set<Person> bankDriverPopulationWithRaft = this.driversOnBank(bankPopulationWithRaft);
 
         // all drivers can travel across
-        for (Map.Entry<String, Person> driver:
-                bankDriverPopulationWithRaft.entrySet()) {
-
-            peopleCrossing.put(driver.getKey(), driver.getValue());
-            tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), peopleCrossing);
-            result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
-
+        for (Person driver:
+                bankDriverPopulationWithRaft) {
            // gets the weight of the driver
             /**
              * if raft is south work out the configuration of prople that can be added to the beat
              */
             if(this.raftLocation == RiverBank.SOUTH){
-
-                HashMap<String, Person> tempPopulation =  (HashMap<String, Person>) bankPopulationWithRaft.clone();
-                tempPopulation.remove(driver.getKey());
-                Set<Set> bankPopulationPowerset = populationPowerSet(tempPopulation.keySet()); // get the powerset of hashmap keys
-
-
-                // loop over all possible boat configura
-                for (Set boatConfiguration:
-                        bankPopulationPowerset) {
-
-                    if (!boatConfiguration.isEmpty()){
-                        double boatWeight = driver.getValue().getWeight();
-                        System.out.println("driver"+boatWeight);
-                        // loop over all people in boat configuration
-                        peopleCrossing.clear();
-
-                        for (Object stringPersonKey:
-                                boatConfiguration) {
-
-                            boatWeight += tempPopulation.get(stringPersonKey).getWeight();
-
-                            if((boatWeight <= RiverCrossProblem.RAFT_MAX_WEIGHT && boatWeight > 0) ||
-                                    (boatConfiguration.size() < RiverCrossProblem.RAFT_SIZE && boatConfiguration.size() > 0)) {
-
-                                peopleCrossing.put((String) stringPersonKey, bankPopulationWithRaft.get((String) stringPersonKey));
-                            }else{
-                                boatWeight = driver.getValue().getWeight();
-                                peopleCrossing.clear();
-                                break;
-                            }
-                            peopleCrossing.put((String) stringPersonKey, bankPopulationWithRaft.get((String) stringPersonKey));
-                        }
-
-                        peopleCrossing.put(driver.getKey(), bankDriverPopulationWithRaft.get(driver.getKey()) );
-                        System.out.println(boatWeight);
-                        tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), peopleCrossing);
-
-                        if(tempAction.boatWeight() <= RiverCrossProblem.RAFT_MAX_WEIGHT &&
-                                tempAction.boatWeight() > 0 &&
-                                tempAction.peopleCrossing.size() <= RiverCrossProblem.RAFT_SIZE &&
-                                tempAction.peopleCrossing.size() > 0)
-                            result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
-
-                    }
+                HashSet<Person> tempPopulation = new HashSet<>(bankPopulationWithRaft);
+                Set<Set> bankPopulationPowerset = this.safeBoatConfiguration(populationPowerSet(tempPopulation), driver); // get the powerset of populationBank with out driver
+                for (Set s:
+                    bankPopulationPowerset) {
+                    tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), new HashSet<>(s));
+                    result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
                 }
+            }else{
+                Set<Person> d = new HashSet<>();
+                d.add(driver);
+                tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), new HashSet<>(d));
+                result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
             }
 
         }
@@ -177,13 +136,35 @@ public class RiverCrossState implements State {
 
         return result;
     }//end method
-
-    private HashMap<String, Person> driversOnBank(HashMap<String, Person> bank){
-        HashMap<String, Person> driversOnBank = new HashMap<>();
-        for(Map.Entry<String, Person> entry : bank.entrySet()) {
-            if (entry.getValue().isDriver()) driversOnBank.put(entry.getKey(), entry.getValue());
+    public Set<Set> safeBoatConfiguration(Set<Set> s, Person driver){
+        Set<Set> returns = new HashSet<>();
+        for (Set config:
+             s) {
+            boolean pass = true;
+            if (!config.contains(driver)) continue;
+            if(config.size() < 1 ||
+                    config.size() > RiverCrossProblem.RAFT_SIZE){
+                // System.out.println("T S"+s.size());
+                continue;
+            }
+            double weight = 0.0;
+            for (Object p:
+                    config) {
+                weight+= ((Person)p).getWeight();
+                if(weight > RiverCrossProblem.RAFT_MAX_WEIGHT || weight < 0.0){
+                    //  System.out.println("F W"+weight+"S"+s.size());
+                    pass=false;
+                    break;
+                }
+            }
+            // System.out.println("T W"+weight+"S"+s.size());
+            if(pass)returns.add(config);
         }
-        return driversOnBank;
+        return returns;
+    }
+
+    private Set<Person> driversOnBank(Set<Person> bank){
+        return bank.stream().filter(p -> p.isDriver()).collect(Collectors.toSet());
     }
 
     private Set<Set> populationPowerSet(Set originalSet) {
@@ -193,7 +174,7 @@ public class RiverCrossState implements State {
             return sets;
         }
         List list = new ArrayList(originalSet);
-        String head = (String)list.get(0);
+        Object head = (Object)list.get(0);
         Set rest = new HashSet(list.subList(1, list.size()));
         for (Set set : populationPowerSet(rest)) {
             Set newSet = new HashSet();
@@ -220,7 +201,7 @@ public class RiverCrossState implements State {
          * checks if there is a driver on the bank the raft is at.
          */
         for (Person p:
-                (this.raftLocation == RiverBank.NORTH)? this.northBankPopulation.values(): this.southBankPopulation.values()) {
+                (this.raftLocation == RiverBank.NORTH)? this.northBankPopulation: this.southBankPopulation) {
             if(p.isDriver()) return false; // state is valid if a driver is on the bank and the
         }
 
@@ -233,16 +214,17 @@ public class RiverCrossState implements State {
      * @return The next state after the action is applied to the current state object.
      */
     public RiverCrossState applyAction(RiverCrossAction action){
-        HashMap<String, Person> newNorthBank = (HashMap<String, Person>)this.northBankPopulation.clone();
-        HashMap<String, Person> newSouthBank = (HashMap<String, Person>)this.southBankPopulation.clone();
 
-        for(Map.Entry<String, Person> person : action.peopleCrossing.entrySet()) {
+        Set<Person> newNorthBank = new HashSet<>(this.northBankPopulation);
+        Set<Person> newSouthBank = new HashSet<>(this.southBankPopulation);
+
+        for(Person p : action.peopleCrossing) {
             if (action.toBank == RiverBank.NORTH) {
-                newNorthBank.put(person.getKey(), person.getValue());
-                newSouthBank.remove(person.getKey());
+                newNorthBank.add(p);
+                newSouthBank.remove(p);
             } else {
-                newSouthBank.put(person.getKey(), person.getValue());
-                newNorthBank.remove(person.getKey());
+                newSouthBank.add(p);
+                newNorthBank.remove(p);
             }
             // do what you have to do here
 

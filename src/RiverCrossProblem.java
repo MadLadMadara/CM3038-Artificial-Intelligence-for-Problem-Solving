@@ -13,7 +13,7 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
 
     public static int RAFT_SIZE=2;
 
-    public static double RAFT_MAX_WEIGHT = 180;
+    public static double RAFT_MAX_WEIGHT = 150;
 
     /**
      * Construct a RiverCrossProblem object from the initial and goal state.
@@ -30,14 +30,7 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
      * @param node	The node to be evaluated.
      * @return The score of the node. The lower the score, the more promising the node.
      */
-    public double evaluation(Node node)
-    {
-
-        //
-        //*** Update this evaluation function.
-        //*** Currently it is doing Greedy best-first by using the heuristic alone.
-        //*** i.e. estimate how far the given "node" is from a goal.
-        //*** It does not take into consideration the cost from the root to "node" so far.
+    public double evaluation(Node node){
         //***
         return heuristic(node.state) + node.getCost();
     } //end method
@@ -47,18 +40,17 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
      * @return The remaining distance/cost of the current state to a goal.
      */
     public double heuristic(State currentState) {
-        // TODO: 16/04/2018 heuristic method
+        // TODO: 16/04/2018 heuristic method needs tinkering
 
         RiverCrossState state = (RiverCrossState)currentState;
 
         double result = 0.0;
         for (Person p:
-        state.southBankPopulation.values()) {
+        state.southBankPopulation) {
             result+=p.getWeight();
         }
 
-
-        return result*200;
+        return result*2;
     } //end method
 
 
