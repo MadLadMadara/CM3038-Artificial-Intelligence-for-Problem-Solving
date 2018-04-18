@@ -13,6 +13,7 @@ import cm3038.search.*;
  */
 public class RiverCrossState implements State {
 
+    private List<ActionStatePair> possibleActions;
     /**
      * north bank population
      */
@@ -22,7 +23,14 @@ public class RiverCrossState implements State {
      * south bank population
      */
     public Set<Person> southBankPopulation;
-
+    /**
+     *
+     */
+    public double southBankPopulationTotalWeight;
+    /**
+     *
+     */
+    public double northBankPopulationTotalWeight;
     /**
      * The location of the raft as defined in the {@link RiverBank} enumerated type.
      */
@@ -38,6 +46,17 @@ public class RiverCrossState implements State {
         this.northBankPopulation = new HashSet<>(northBankPopulation);
         this.southBankPopulation = new HashSet<>(southBankPopulation);
         this.raftLocation=raft;
+        this.possibleActions = new ArrayList<>();
+        northBankPopulationTotalWeight = 0.0;
+        for (Person p:
+                this.northBankPopulation) {
+            this.northBankPopulationTotalWeight+=p.getWeight();
+        }
+        this.southBankPopulationTotalWeight = 0.0;
+        for (Person p:
+             this.southBankPopulation) {
+            this.southBankPopulationTotalWeight+=p.getWeight();
+        }
     } //end method
 
     /**
@@ -67,13 +86,11 @@ public class RiverCrossState implements State {
      * @return true if the parameter state is the same as the current state object.
      */
     public boolean equals(Object state) {
-
         if (!(state instanceof RiverCrossState))	//if the given parameter is not a McState
             return false;				//it must be false
-
         RiverCrossState stateToTest = (RiverCrossState)state;
         /**
-         * hashMap equals ignore the ordering of the hash maps
+         * Set equals ignore the ordering of the Set maps
          */
         if(stateToTest.northBankPopulation.size() != this.northBankPopulation.size() || stateToTest.southBankPopulation.size() != this.southBankPopulation.size() ||
                 stateToTest.raftLocation != this.raftLocation)
@@ -96,96 +113,63 @@ public class RiverCrossState implements State {
      */
     public List<ActionStatePair> successor(){
 
-        List<ActionStatePair> result=new ArrayList<ActionStatePair>();		//I chose to use an ArrayList object as the list will be short.
+        if(this.possibleActions.size() >= 1) return this.possibleActions;
+        //I chose to use an ArrayList object as the list will be short.
+        if (this.isInvalid())//if current state is invalid
+            return this.possibleActions;
+        this.generatePossibleActions((this.raftLocation == RiverBank.NORTH)?this.northBankPopulation:this.southBankPopulation);
 
-        if (this.isInvalid())				//if current state is invalid
-            return result;
-
-        // temp temp RiverCrossAction object
-        RiverCrossAction tempAction;
-        // the populating hashmap of which ever bank the raft is located
-        Set<Person> bankPopulationWithRaft = (this.raftLocation == RiverBank.NORTH)? new HashSet<>(this.northBankPopulation): new HashSet<>(this.southBankPopulation);
-        // the driver populating hashmap of which ever bank the raft is located
-        Set<Person> bankDriverPopulationWithRaft = this.driversOnBank(bankPopulationWithRaft);
-
-        Set<Set> populationPowerSet = getPopulationPowerSet(new HashSet<>(bankPopulationWithRaft));
-        // all drivers can travel across
-        for (Person driver:
-                bankDriverPopulationWithRaft) {
-           // gets the weight of the driver
-            /**
-             * if raft is south work out the configuration of prople that can be added to the beat
-             */
-            if(this.raftLocation == RiverBank.SOUTH){
-                ;
-                Set<Set> bankPopulationPowerset = this.safeBoatConfiguration(populationPowerSet, driver); // get the powerset of populationBank with out driver
-                for (Set s:
-                    bankPopulationPowerset) {
-                    tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), new HashSet<>(s));
-                    result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
-                }
-            }else{
-                Set<Person> d = new HashSet<>();
-                d.add(driver);
-                tempAction = new RiverCrossAction(this.oppositeBank(this.raftLocation), new HashSet<>(d));
-                result.add(new ActionStatePair(tempAction, this.applyAction(tempAction)));
-            }
-
-        }
-
-
-        return result;
+        return this.possibleActions;
     }//end method
-    public Set<Set> safeBoatConfiguration(Set<Set> s, Person driver){
-        Set<Set> returns = new HashSet<>();
-        for (Set config:
-             s) {
-            boolean pass = true;
-            if (!config.contains(driver)) continue;
-            if(config.size() < 1 ||
-                    config.size() > RiverCrossProblem.RAFT_SIZE){
-                // System.out.println("T S"+s.size());
-                continue;
-            }
-            double weight = 0.0;
-            for (Object p:
-                    config) {
-                weight+= ((Person)p).getWeight();
-                if(weight > RiverCrossProblem.RAFT_MAX_WEIGHT || weight < 0.0){
-                    //  System.out.println("F W"+weight+"S"+s.size());
-                    pass=false;
-                    break;
-                }
-            }
-            // System.out.println("T W"+weight+"S"+s.size());
-            if(pass)returns.add(config);
-        }
-        return returns;
-    }
 
-    private Set<Person> driversOnBank(Set<Person> bank){
-        return bank.stream().filter(p -> p.isDriver()).collect(Collectors.toSet());
-    }
+    private Set<Set> generatePossibleActions(Set originalSet) {
 
-    private Set<Set> getPopulationPowerSet(Set originalSet) {
-        Set<Set> sets = new HashSet<Set>();
-        if (originalSet.isEmpty()) {
+        List<ActionStatePair> actions = new ArrayList<>();
+        RiverCrossAction temp;
+        Set<Set> sets = new HashSet<>();
+        if (originalSet.isEmpty() || !this.possibleActions.isEmpty()) {
             sets.add(new HashSet());
             return sets;
         }
         List list = new ArrayList(originalSet);
         Object head = (Object)list.get(0);
         Set rest = new HashSet(list.subList(1, list.size()));
-        for (Set set : getPopulationPowerSet(rest)) {
-            Set newSet = new HashSet();
+
+        Set newSet = new HashSet();
+        for (Set set : generatePossibleActions(rest)) {
+            if(set.isEmpty() && !((Person)head).isDriver()) continue;
+            System.out.println(head.toString()+" "+set.toString());
+            newSet.clear();
             newSet.add(head);
             newSet.addAll(set);
+            if(this.isInvalidateBoatCongig(newSet))continue;
             sets.add(newSet);
-            sets.add(set);
+            temp=new RiverCrossAction(this.oppositeBank(this.raftLocation), newSet);
+            this.possibleActions.add(new ActionStatePair(temp, this.applyAction(temp)));
         }
+
         return sets;
     }
 
+    private boolean isInvalidateBoatCongig(Set c){
+        System.out.println(c);
+        Set<Person> config = new HashSet<>(c);
+        boolean containsDriver = false;
+        if(config.size() < 1 ||
+                config.size() > RiverCrossProblem.RAFT_SIZE){
+            return true;
+        }
+        double weight = 0.0;
+        for (Object p:
+                config) {
+            weight+= ((Person)p).getWeight();
+
+            if(((Person)p).isDriver()) containsDriver=true;
+            if(weight > RiverCrossProblem.RAFT_MAX_WEIGHT || weight <= 0) return true;
+        }
+        if(!containsDriver)return true;
+        return false;
+    }
 
     /**
      * Check if a state is invalid.
@@ -214,10 +198,8 @@ public class RiverCrossState implements State {
      * @return The next state after the action is applied to the current state object.
      */
     public RiverCrossState applyAction(RiverCrossAction action){
-
         Set<Person> newNorthBank = new HashSet<>(this.northBankPopulation);
         Set<Person> newSouthBank = new HashSet<>(this.southBankPopulation);
-
         for(Person p : action.peopleCrossing) {
             if (action.toBank == RiverBank.NORTH) {
                 newNorthBank.add(p);
@@ -226,10 +208,7 @@ public class RiverCrossState implements State {
                 newSouthBank.add(p);
                 newNorthBank.remove(p);
             }
-            // do what you have to do here
-
         }
-
         return new RiverCrossState(newNorthBank, newSouthBank, this.oppositeBank(this.raftLocation));
 
 

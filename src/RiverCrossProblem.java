@@ -11,9 +11,9 @@ import java.util.HashMap;
  */
 public class RiverCrossProblem extends BestFirstSearchProblem {
 
-    public static int RAFT_SIZE=2;
+    public static int RAFT_SIZE=3;
 
-    public static double RAFT_MAX_WEIGHT = 150;
+    public static double RAFT_MAX_WEIGHT = 50;
 
     /**
      * Construct a RiverCrossProblem object from the initial and goal state.
@@ -45,10 +45,8 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
         RiverCrossState state = (RiverCrossState)currentState;
 
         double result = 0.0;
-        for (Person p:
-        state.southBankPopulation) {
-            result+=p.getWeight();
-        }
+
+
 
         return result*2;
     } //end method
