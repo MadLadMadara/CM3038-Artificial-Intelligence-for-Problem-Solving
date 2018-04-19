@@ -42,13 +42,22 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
     public double heuristic(State currentState) {
         // TODO: 16/04/2018 heuristic method needs tinkering
 
-        RiverCrossState state = (RiverCrossState)currentState;
+        RiverCrossState current = (RiverCrossState)currentState;
+        RiverCrossState goal = (RiverCrossState)currentState;
 
-        double result = 0.0;
+        double currentSouthWeight = 0.0;
+        double weightToReach = 0.0;
 
+        for (Person p:
+                current.southBankPopulation) {
+            currentSouthWeight+=p.getWeight();
+        }
+        for (Person p:
+                goal.northBankPopulation) {
+            weightToReach+=p.getWeight();
+        }
 
-
-        return result*2;
+        return currentSouthWeight*2;
     } //end method
 
 

@@ -18,13 +18,14 @@ public class RiverCrossRun {
         System.out.println(RiverCrossProblem.RAFT_MAX_WEIGHT);
 
         southBank = new HashSet<Person>();
-        southBank.add(new Person("Adam", 30, false));
-        southBank.add(new Person("Betty", 100, false));
-        southBank.add(new Person("Claire", 50, true));
+        southBank.add(new Person("Adam", 10, true));
+        southBank.add(new Person("Betty", 20, false));
+        southBank.add(new Person("Claire", 30, true));
         southBank.add(new Person("Dave", 40, false));
-        southBank.add(new Person("John", 30, true));
-        southBank.add(new Person("Max", 100, false));
-        southBank.add(new Person("Sam", 50, false));
+        southBank.add(new Person("L", 10, true));
+        southBank.add(new Person("B", 20, false));
+        southBank.add(new Person("S", 30, true));
+        southBank.add(new Person("Q", 40, false));
 
 
         northBank = new HashSet<>();

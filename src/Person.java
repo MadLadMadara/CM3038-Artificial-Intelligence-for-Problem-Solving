@@ -26,7 +26,7 @@ public class Person {
      * @param weight of individual weight
      * @param driver can the individual drive the boat
      */
-    public Person(String name, int weight, boolean driver) {
+    public Person(String name, double weight, boolean driver) {
         this.name = name;
         this.weight = weight;
         this.driver = driver;
