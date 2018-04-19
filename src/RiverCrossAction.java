@@ -49,7 +49,7 @@ public class RiverCrossAction extends Action {
             result="!!!Action!!!\nSouth->North ";
         else result="!!!Action!!!\nNorth->South ";
 
-        result+= "\ncost("+ this.cost +") Max cost^"+RiverCrossProblem.RAFT_MAX_WEIGHT+"^\n"+this.peopleCrossing.toString()+"\nCrossing Size{"+this.peopleCrossing.size()+"}{"+RiverCrossProblem.RAFT_SIZE+"} \nboat weight:"+this.boatWeight();
+        result+= "\nCost ("+ this.cost +") Max{"+RiverCrossProblem.RAFT_MAX_WEIGHT+"} "+this.peopleCrossing.toString()+"\nSeats Taken ("+this.peopleCrossing.size()+") Max{"+RiverCrossProblem.RAFT_SIZE+"}";
 
         return result;
     } //end method

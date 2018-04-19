@@ -53,16 +53,9 @@ public class RiverCrossState implements State {
             result+="\nRaft location: North";
         if (raftLocation==RiverBank.SOUTH)
             result+="\nRaft location: South";
-
-        result+="\nNorth Bank Population:"+this.northBankPopulation.toString();
-        result+="\nSorth Bank Population:"+this.southBankPopulation.toString();
-        // can be useful for debugging.
-//        result+="\nNorth Bank Population detail:"+this.northBankPopulation.toString();
-//        result+="\nSouth Bank Population detail:"+this.southBankPopulation.toString();
-
-        // FIX: 14/04/2018 toString: could add number of drivers on each bank, it would help with debugging later
-        return result+"\nNorth bank size:" + this.northBankPopulation.size() + "\nSouth bank size:" + this.southBankPopulation.size();
-
+        result+="\nNorth bank size:" + this.northBankPopulation.size() + "  "+ this.northBankPopulation.toString();
+        result+="\nSouth bank size:" + this.southBankPopulation.size()+ "  "+this.southBankPopulation.toString();
+        return result;
     } //end method
 
     /**
