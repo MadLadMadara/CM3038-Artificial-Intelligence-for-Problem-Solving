@@ -44,49 +44,48 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
         // TODO: 16/04/2018 heuristic method needs tinkering
 
         RiverCrossState current = (RiverCrossState)currentState;
-        RiverCrossState goal = (RiverCrossState)currentState;
 
+        double driverWeight; // drivers weight
 
-        double driverWeight;
+        int numberOfReturnTrips = 0; // estimate number of times the driver the driver will travil from north to south
 
-        int numberOfTripsToMake = 0;
+        double southSumWeight = 0.0; // south bank sum weight
 
-        double currentSouthWeight = 0.0;
+        double maxBoatWeightWithOutDriver; // max boat weight minus driver weight
 
-        double ajustedBoatLoad = 0.0;
-
-        double ajustedSouthWeight = 0;
-
-
+        double southBankSumWeightWithOutDriver; // sum south bank weight minus driver weight
 
         if(current.raftLocation == RiverBank.NORTH){
-            driverWeight = RiverCrossProblem.RAFT_MAX_WEIGHT + 1;
-            numberOfTripsToMake=1;
+            driverWeight = RiverCrossProblem.RAFT_MAX_WEIGHT + 1; //  driver weight unknown, set to the max weight of the boat
+            numberOfReturnTrips=1; // driver will always need to make a return journey
             for (Person p:
-                    current.northBankPopulation) {
-                if(p.isDriver() && p.getWeight() < driverWeight) driverWeight = p.getWeight();
+                    current.northBankPopulation) { // loop through northbank population
+                if(p.isDriver() && p.getWeight() < driverWeight)
+                    driverWeight = p.getWeight(); // set driverWeight if p is a driver and is lighter than driverWeight
             }
             for (Person p:
-                    current.southBankPopulation) {
-                currentSouthWeight+=p.getWeight();
+                    current.southBankPopulation) { // loop through southbank population
+                southSumWeight+=p.getWeight(); // get southbank total weight
             }
         }else{
             driverWeight = 0;
             int numDriver = 0;
             for (Person p:
-                    current.southBankPopulation) {
-                currentSouthWeight+=p.getWeight();
+                    current.southBankPopulation) { // loop through southbank population
+                southSumWeight+=p.getWeight();// add driver weight
                 if(p.isDriver()) {
                     numDriver++;
                     driverWeight += p.getWeight();
                 }
             }
-            driverWeight = driverWeight/numDriver;
+            driverWeight = driverWeight/numDriver; // set to the average driver weight of south bank
         }
-        ajustedBoatLoad = RiverCrossProblem.RAFT_MAX_WEIGHT - driverWeight;
-        ajustedSouthWeight = (int) currentSouthWeight - driverWeight;
-        numberOfTripsToMake += ((int) (ajustedSouthWeight/ajustedBoatLoad));
-        return (numberOfTripsToMake*driverWeight)+currentSouthWeight;
+
+        maxBoatWeightWithOutDriver = RiverCrossProblem.RAFT_MAX_WEIGHT - driverWeight;
+        southBankSumWeightWithOutDriver = (int) southSumWeight - driverWeight;
+        numberOfReturnTrips += ((int) (southBankSumWeightWithOutDriver/maxBoatWeightWithOutDriver)); // estimated amout of return trips for driver
+        // number of return trips to make times the estimated drivers weight plus the weight still to be transfered (southbankweight)
+        return numberOfReturnTrips*driverWeight+southSumWeight;
     } //end method
 
     /**

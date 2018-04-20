@@ -14,11 +14,11 @@ public class RiverCrossState implements State {
 
     private List<ActionStatePair> possibleActions;
     /**
-     * north bank population
+     * north bank population set
      */
     public Set<Person> northBankPopulation;
     /**
-     * south bank population
+     * south bank population set
      */
     public Set<Person> southBankPopulation;
     /**
@@ -53,7 +53,6 @@ public class RiverCrossState implements State {
     } //end method
 
     /**
-     *
      * @param state The other state to test.
      * @return true if the parameter state is the same as the current state object.
      */
@@ -97,6 +96,13 @@ public class RiverCrossState implements State {
         return this.possibleActions;
     }//end method
 
+    /**
+     *
+     * generates the powerset of the originalSet parameter.
+     * adds  ActionStatePairs of vailid sets from the powerset to the possibleActions List
+     * @param originalSet
+     * @return
+     */
     private Set<Set<Person>> generatePossibleActions(Set<Person> originalSet) {
         Set<Set<Person>> sets = new HashSet<>();
         List<ActionStatePair> actions = new ArrayList<>();
@@ -141,7 +147,12 @@ public class RiverCrossState implements State {
         }
         return sets;
     }
-    // get Driver,
+
+    /**
+     * check if the set has a driver and is within the RiverCrossProblem RAFT_MAX_WEIGHT
+     * @param c the set to check
+     * @return true if set not valid
+     */
     private boolean checkForDriverAndWeight(Set c){
         Set<Person> config = new HashSet<>(c);
         boolean containsDriver = false;
@@ -157,11 +168,11 @@ public class RiverCrossState implements State {
     }
 
     /**
-     *
-     * @param s
+     *  adds an ActionStatePair to possibleActions with the lighst driver.
+     * @param s set to search
      */
     private void generateLightestDriverAction(Set<Person> s){
-        Person lightestDriver = new Person("dummy", RiverCrossProblem.RAFT_MAX_WEIGHT, false);
+        Person lightestDriver = new Person("dummy", RiverCrossProblem.RAFT_MAX_WEIGHT + 1, false);
         for (Person p:
              s) {
             if(p.isDriver() && p.getWeight() < lightestDriver.getWeight())lightestDriver = p;
@@ -178,7 +189,7 @@ public class RiverCrossState implements State {
      * @return true if a state is invalid. Or false otherwise.
      */
     public boolean isInvalid(){
-        // FIX 14/04/2018 toString: main if might need reworking
+        // check if there are people on the bank the raft is at
         if (((this.raftLocation == RiverBank.NORTH && this.northBankPopulation.isEmpty()) ||
                         (this.raftLocation == RiverBank.SOUTH && this.southBankPopulation.isEmpty()) ) )
             return true;
@@ -211,7 +222,7 @@ public class RiverCrossState implements State {
     } //end method
 
     /**
-     * A handy method to find the opposite bank of the river.
+     * get opposite bank
      * @param current
      * @return
      */
