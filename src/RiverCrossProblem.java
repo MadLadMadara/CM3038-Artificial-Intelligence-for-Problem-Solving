@@ -41,7 +41,7 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
      * @return The remaining distance/cost of the current state to a goal.
      */
     public double heuristic(State currentState) {
-        // TODO: 16/04/2018 heuristic method needs tinkering
+
 
         RiverCrossState current = (RiverCrossState)currentState;
 
