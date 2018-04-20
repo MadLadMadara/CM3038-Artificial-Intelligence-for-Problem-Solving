@@ -13,7 +13,7 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
 
     public static int RAFT_SIZE=3;
 
-    public static double RAFT_MAX_WEIGHT = 50;
+    public static double RAFT_MAX_WEIGHT = 180;
 
     /**
      * Construct a RiverCrossProblem object from the initial and goal state.
@@ -45,25 +45,19 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
 
         RiverCrossState current = (RiverCrossState)currentState;
 
-        double driverWeight = current.averageDriverWeight; // drivers weight
-
         int numberOfReturnTrips = 1; // estimate number of times the driver the driver will travil from north to south
-
-        double southSumWeight = current.southWeight; // south bank sum weight
 
         double maxBoatWeightWithOutDriver = RiverCrossProblem.RAFT_MAX_WEIGHT - current.averageDriverWeight; // max boat weight minus driver weight
 
-        double southBankSumWeightWithOutDriver = southSumWeight; // sum south bank weight minus driver weight
+        double southBankSumWeightWithOutDriver = current.southWeight; // sum south bank weight minus driver weight
 
         if(current.raftLocation == RiverBank.SOUTH){
             numberOfReturnTrips=1; // driver will always need to make a return journey
-            southBankSumWeightWithOutDriver = southBankSumWeightWithOutDriver - driverWeight;
-
+            southBankSumWeightWithOutDriver = southBankSumWeightWithOutDriver - current.averageDriverWeight;
         }
-
         numberOfReturnTrips += ((int) (southBankSumWeightWithOutDriver/maxBoatWeightWithOutDriver)); // estimated amout of return trips for driver
         // number of return trips to make times the estimated drivers weight plus the weight still to be transfered (southbankweight)
-        return numberOfReturnTrips*driverWeight+southSumWeight;
+        return numberOfReturnTrips*current.averageDriverWeight+current.southWeight;
     } //end method
 
     /**
