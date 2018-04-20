@@ -16,17 +16,27 @@ public class RiverCrossRun {
 
         // set south bank
         southBank.add(new Person("Adam", 100, true));
-        southBank.add(new Person("Betty", 90, false));
-        southBank.add(new Person("Claire", 50, true));
-        southBank.add(new Person("Dave", 30, false));
+        southBank.add(new Person("Betty", 50, true));
+        southBank.add(new Person("Claire", 51, true));
+        southBank.add(new Person("Dave", 30, true));
+        southBank.add(new Person("J", 50, true));
+        southBank.add(new Person("h", 30, true));
+        southBank.add(new Person("Adam", 100, true));
+        southBank.add(new Person("Betty", 50, true));
+        southBank.add(new Person("Claire", 51, true));
+        southBank.add(new Person("Dave", 30, true));
+        southBank.add(new Person("J", 50, true));
+        southBank.add(new Person("h", 30, true));
+
+
 
         // initalize inital and goal state, goal state is just north and south bank swapped
         RiverCrossState initialState = new RiverCrossState(northBank, southBank, RiverBank.SOUTH);
         RiverCrossState goalState = new RiverCrossState(southBank, northBank, RiverBank.NORTH);
 
         // set problem scope
-        RiverCrossProblem.RAFT_SIZE = 2;
-        RiverCrossProblem.RAFT_MAX_WEIGHT = 180;
+        RiverCrossProblem.RAFT_SIZE = 3;
+        RiverCrossProblem.RAFT_MAX_WEIGHT = 100;
         RiverCrossProblem problem=new RiverCrossProblem(initialState,goalState);
 
         // search problem and output results

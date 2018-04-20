@@ -26,6 +26,10 @@ public class RiverCrossState implements State {
      */
     public RiverBank raftLocation;
     /**
+     * south weight
+     */
+    public double southWeight, averageDriverWeight;
+    /**
      * Create a McState object with the given initial values.
      * @param northBankPopulation hash map of people in the north bank.
      * @param southBankPopulation hash map of people in the south bank.
@@ -36,6 +40,22 @@ public class RiverCrossState implements State {
         this.southBankPopulation = new HashSet<>(southBankPopulation);
         this.raftLocation=raft;
         this.possibleActions = new ArrayList<>();
+        int i = 0;
+        for (Person p:
+                this.southBankPopulation) {
+            southWeight+=p.getWeight();
+            if(p.isDriver()) this.averageDriverWeight += p.getWeight();
+            i++;
+        }
+        if(this.raftLocation == RiverBank.NORTH){
+            i = 0;
+            for (Person p:
+                 this.northBankPopulation) {
+                if(p.isDriver()) this.averageDriverWeight += p.getWeight();
+                i++;
+            }
+        }
+        this.averageDriverWeight = averageDriverWeight/i;
     } //end method
 
     /**
@@ -83,16 +103,8 @@ public class RiverCrossState implements State {
      * @return A list of ActionStatePair objects.
      */
     public List<ActionStatePair> successor(){
-        if(this.possibleActions.size() >= 1) return this.possibleActions;
-
-        if (this.isInvalid())//if current state is invalid
-            return this.possibleActions;
-
-        if(this.raftLocation == RiverBank.NORTH){
-            this.generateLightestDriverAction(this.northBankPopulation);
-        }else{
-            this.generatePossibleActions(this.southBankPopulation);
-        }
+        if(this.possibleActions.size() >= 1 || this.isInvalid()) return this.possibleActions;
+        this.generatePossibleActions((this.raftLocation == RiverBank.NORTH)?this.northBankPopulation:this.southBankPopulation);
         return this.possibleActions;
     }//end method
 
@@ -165,24 +177,6 @@ public class RiverCrossState implements State {
         }
         if(!containsDriver)return true;
         return false;
-    }
-
-    /**
-     *  adds an ActionStatePair to possibleActions with the lighst driver.
-     * @param s set to search
-     */
-    private void generateLightestDriverAction(Set<Person> s){
-        Person lightestDriver = new Person("dummy", RiverCrossProblem.RAFT_MAX_WEIGHT + 1, false);
-        for (Person p:
-             s) {
-            if(p.isDriver() && p.getWeight() < lightestDriver.getWeight())lightestDriver = p;
-        }
-        if(lightestDriver.isDriver()){
-            Set<Person> lightestPersonSet = new HashSet<>();
-            lightestPersonSet.add(lightestDriver);
-            RiverCrossAction action = new RiverCrossAction(this.oppositeBank(this.raftLocation), lightestPersonSet);
-            this.possibleActions.add(new ActionStatePair(action, this.applyAction(action)));
-        }
     }
     /**
      * Check if a state is invalid.
