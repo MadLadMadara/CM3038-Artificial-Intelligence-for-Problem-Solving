@@ -17,20 +17,14 @@ public class RiverCrossState implements State {
      * north bank population
      */
     public Set<Person> northBankPopulation;
-    // change these
     /**
      * south bank population
      */
     public Set<Person> southBankPopulation;
     /**
-     *
-     */
-
-    /**
      * The location of the raft as defined in the {@link RiverBank} enumerated type.
      */
     public RiverBank raftLocation;
-
     /**
      * Create a McState object with the given initial values.
      * @param northBankPopulation hash map of people in the north bank.
@@ -147,7 +141,7 @@ public class RiverCrossState implements State {
         }
         return sets;
     }
-
+    // get Driver,
     private boolean checkForDriverAndWeight(Set c){
         Set<Person> config = new HashSet<>(c);
         boolean containsDriver = false;

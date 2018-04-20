@@ -32,6 +32,7 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
      */
     public double evaluation(Node node){
         //***
+
         return heuristic(node.state) + node.getCost();
     } //end method
 
@@ -45,21 +46,48 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
         RiverCrossState current = (RiverCrossState)currentState;
         RiverCrossState goal = (RiverCrossState)currentState;
 
+
+        double driverWeight;
+
+        int numberOfTripsToMake = 0;
+
         double currentSouthWeight = 0.0;
-        double weightToReach = 0.0;
 
-        for (Person p:
-                current.southBankPopulation) {
-            currentSouthWeight+=p.getWeight();
-        }
-        for (Person p:
-                goal.northBankPopulation) {
-            weightToReach+=p.getWeight();
-        }
+        double ajustedBoatLoad = 0.0;
 
-        return currentSouthWeight*2;
+        double ajustedSouthWeight = 0;
+
+
+
+        if(current.raftLocation == RiverBank.NORTH){
+            driverWeight = RiverCrossProblem.RAFT_MAX_WEIGHT + 1;
+            numberOfTripsToMake=1;
+            for (Person p:
+                    current.northBankPopulation) {
+                if(p.isDriver() && p.getWeight() < driverWeight) driverWeight = p.getWeight();
+            }
+            for (Person p:
+                    current.southBankPopulation) {
+                currentSouthWeight+=p.getWeight();
+            }
+        }else{
+            driverWeight = 0;
+            int numDriver = 0;
+            for (Person p:
+                    current.southBankPopulation) {
+                currentSouthWeight+=p.getWeight();
+                if(p.isDriver()) {
+                    numDriver++;
+                    driverWeight += p.getWeight();
+                }
+            }
+            driverWeight = driverWeight/numDriver;
+        }
+        ajustedBoatLoad = RiverCrossProblem.RAFT_MAX_WEIGHT - driverWeight;
+        ajustedSouthWeight = (int) currentSouthWeight - driverWeight;
+        numberOfTripsToMake += ((int) (ajustedSouthWeight/ajustedBoatLoad));
+        return (numberOfTripsToMake*driverWeight)+currentSouthWeight;
     } //end method
-
 
     /**
      * This isGoal testing method defines that the a state must be
