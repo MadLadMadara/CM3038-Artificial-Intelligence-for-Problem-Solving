@@ -28,7 +28,7 @@ public class RiverCrossState implements State {
     /**
      * south weight
      */
-    public double southWeight, averageDriverWeight;
+    public double southWeight;
     /**
      * Create a McState object with the given initial values.
      * @param northBankPopulation hash map of people in the north bank.
@@ -40,22 +40,6 @@ public class RiverCrossState implements State {
         this.southBankPopulation = new HashSet<>(southBankPopulation);
         this.raftLocation=raft;
         this.possibleActions = new ArrayList<>();
-        int i = 0;
-        for (Person p:
-                this.southBankPopulation) {
-            southWeight+=p.getWeight();
-            if(p.isDriver()) this.averageDriverWeight += p.getWeight();
-            i++;
-        }
-        if(this.raftLocation == RiverBank.NORTH){
-            i = 0;
-            for (Person p:
-                 this.northBankPopulation) {
-                if(p.isDriver()) this.averageDriverWeight += p.getWeight();
-                i++;
-            }
-        }
-        this.averageDriverWeight = averageDriverWeight/i;
     } //end method
 
     /**
@@ -117,7 +101,6 @@ public class RiverCrossState implements State {
      */
     private Set<Set<Person>> generatePossibleActions(Set<Person> originalSet) {
         Set<Set<Person>> sets = new HashSet<>();
-        List<ActionStatePair> actions = new ArrayList<>();
         RiverCrossAction temp;
         if (originalSet.isEmpty() || !this.possibleActions.isEmpty()) {
             sets.add(new HashSet());
@@ -150,7 +133,7 @@ public class RiverCrossState implements State {
             temp = new RiverCrossAction(this.oppositeBank(this.raftLocation), setWithHead); // temp action
             this.possibleActions.add(new ActionStatePair(temp, this.applyAction(temp)));
 
-            // add set to action state pair array if newset is valid
+            // add set to action state pair array if set is valid
             if(((Set<Person>)set).size() < 1 ||
                     setWithHead.size() > RiverCrossProblem.RAFT_SIZE) continue;// check if set set is with in range
             if(this.checkForDriverAndWeight(((Set<Person>)set))) continue;
@@ -177,6 +160,19 @@ public class RiverCrossState implements State {
         }
         if(!containsDriver)return true;
         return false;
+    }
+
+    /**
+     *  gets drivers weight
+     * @return the lightest drivers weight on the bank with the raft
+     */
+    public double getDriverWeight(){
+        double d = RiverCrossProblem.RAFT_MAX_WEIGHT+1;
+        for (Person p:
+                (this.raftLocation == RiverBank.NORTH)?this.northBankPopulation:this.southBankPopulation) {
+            if(p.isDriver() && p.getWeight() < d) d = p.getWeight();
+        }
+        return d;
     }
     /**
      * Check if a state is invalid.

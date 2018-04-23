@@ -24,7 +24,6 @@ public class RiverCrossRun {
         southBank.add(new Person("Betty", 90, false));
         southBank.add(new Person("Claire", 50, true));
         southBank.add(new Person("Dave", 30, false));
-        southBank.add(new Person("Adam", 100, true));
 //        southBank.add(new Person("Betty", 90, false));
 //        southBank.add(new Person("Claire", 50, true));
 //        southBank.add(new Person("Dave", 30, false));

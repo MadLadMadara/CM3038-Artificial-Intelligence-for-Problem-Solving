@@ -43,21 +43,24 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
     public double heuristic(State currentState) {
 
 
+
         RiverCrossState current = (RiverCrossState)currentState;
+
+        double lightestDriverOnBank = current.getDriverWeight();
 
         int numberOfReturnTrips = 1; // estimate number of times the driver the driver will travil from north to south
 
-        double maxBoatWeightWithOutDriver = RiverCrossProblem.RAFT_MAX_WEIGHT - current.averageDriverWeight; // max boat weight minus driver weight
+        double maxBoatWeightWithOutDriver = RiverCrossProblem.RAFT_MAX_WEIGHT - lightestDriverOnBank; // max boat weight minus driver weight
 
         double southBankSumWeightWithOutDriver = current.southWeight; // sum south bank weight minus driver weight
 
         if(current.raftLocation == RiverBank.SOUTH){
-            numberOfReturnTrips=1; // driver will always need to make a return journey
-            southBankSumWeightWithOutDriver = southBankSumWeightWithOutDriver - current.averageDriverWeight;
+            numberOfReturnTrips=0; // driver will always need to make a return journey
+            southBankSumWeightWithOutDriver = southBankSumWeightWithOutDriver - lightestDriverOnBank;
         }
         numberOfReturnTrips += ((int) (southBankSumWeightWithOutDriver/maxBoatWeightWithOutDriver)); // estimated amout of return trips for driver
         // number of return trips to make times the estimated drivers weight plus the weight still to be transfered (southbankweight)
-        return numberOfReturnTrips*current.averageDriverWeight+current.southWeight;
+        return numberOfReturnTrips*lightestDriverOnBank+current.southWeight;
     } //end method
 
     /**
