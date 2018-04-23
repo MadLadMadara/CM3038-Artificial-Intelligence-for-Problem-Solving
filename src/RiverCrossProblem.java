@@ -11,7 +11,8 @@ import java.util.HashMap;
  */
 public class RiverCrossProblem extends BestFirstSearchProblem {
 
-    public static int RAFT_SIZE=3;
+    // default settings
+    public static int RAFT_SIZE=2;
 
     public static double RAFT_MAX_WEIGHT = 180;
 
@@ -31,8 +32,6 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
      * @return The score of the node. The lower the score, the more promising the node.
      */
     public double evaluation(Node node){
-        //***
-
         return heuristic(node.state) + node.getCost();
     } //end method
 
@@ -41,8 +40,6 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
      * @return The remaining distance/cost of the current state to a goal.
      */
     public double heuristic(State currentState) {
-
-
 
         RiverCrossState current = (RiverCrossState)currentState;
 
@@ -58,7 +55,7 @@ public class RiverCrossProblem extends BestFirstSearchProblem {
             numberOfReturnTrips=0; // driver will always need to make a return journey
             southBankSumWeightWithOutDriver = southBankSumWeightWithOutDriver - lightestDriverOnBank;
         }
-        numberOfReturnTrips += ((int) (southBankSumWeightWithOutDriver/maxBoatWeightWithOutDriver)); // estimated amout of return trips for driver
+        numberOfReturnTrips += ((int) (southBankSumWeightWithOutDriver/maxBoatWeightWithOutDriver)); // estimated amount of return trips for driver
         // number of return trips to make times the estimated drivers weight plus the weight still to be transfered (southbankweight)
         return numberOfReturnTrips*lightestDriverOnBank+current.southWeight;
     } //end method
