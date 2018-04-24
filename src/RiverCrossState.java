@@ -112,7 +112,6 @@ public class RiverCrossState implements State {
         Person head = (Person)list.get(0); // get first person
         // rest
         Set rest = new HashSet(list.subList(1, list.size())); // get rest of of the people
-
         // loop over the powerset of rest
         for (Object set : generatePossibleActions(rest)) {
 
@@ -155,10 +154,10 @@ public class RiverCrossState implements State {
         for (Object p:
                 config) {
             weight+= ((Person)p).getWeight();
-            if(((Person)p).isDriver()) containsDriver=true;
-            if(weight > RiverCrossProblem.RAFT_MAX_WEIGHT || weight <= 0) return true;
+            if(((Person)p).isDriver()) containsDriver=true; // if driver exists in set set containsDriver true
+            if(weight > RiverCrossProblem.RAFT_MAX_WEIGHT || weight <= 0) return true; // if set is over wight for max boat.
         }
-        if(!containsDriver)return true;
+        if(!containsDriver)return true; // return true if set dose not contain a driver.
         return false;
     }
 
