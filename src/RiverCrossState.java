@@ -79,7 +79,7 @@ public class RiverCrossState implements State {
      * @return an integer that is unique to the configuration of attributes values in this object
      */
     public int hashCode() {
-        return this.northBankPopulation.hashCode() + this.southBankPopulation.hashCode() + ((this.raftLocation == RiverBank.NORTH)?10:1)*100;
+        return this.southBankPopulation.hashCode() * ((this.raftLocation == RiverBank.NORTH)?20:1);
     } //end method
 
     /**
